@@ -13,16 +13,16 @@ class Plugin {
         }
 
         // Stripe API kulcsok kinyerése az env fájlból
-        $stripe_secret_key = getenv('STRIPE_SECRET_KEY');
-        $stripe_publishable_key = getenv('STRIPE_PUBLISHABLE_KEY');
+        $stripeSecretKey = getenv('STRIPE_SECRET_KEY');
+        $stripePublishableKey = getenv('STRIPE_PUBLISHABLE_KEY');
 
         // Ha nem találjuk a kulcsokat, hibát dobunk
-        if (!$stripe_secret_key || !$stripe_publishable_key) {
+        if (!$stripeSecretKey || !$stripePublishableKey) {
             wp_die('Stripe API kulcsok nem találhatók! Kérjük, állítsd be a megfelelő kulcsokat az env fájlban.');
         }
 
         // Stripe API kulcs beállítása
-        \Stripe\Stripe::setApiKey($stripe_secret_key);
+        \Stripe\Stripe::setApiKey($stripeSecretKey);
 
         // Shortcode regisztrálása
         add_shortcode('subscribe_button', [self::class, 'render_stripe_checkout_button']);
@@ -34,13 +34,20 @@ class Plugin {
 
     public static function render_stripe_checkout_button() {
         // Stripe Checkout gomb megjelenítése
+				$stripeBasicID = getenv('STRIPE_BASIC_ID');
+        $stripeProID = getenv('STRIPE_PRO_ID');
+
+				if (!$stripeBasicID || !$stripeProID) {
+					wp_die('Stripe Gomb ID hiányzik.');
+				}
+
         ob_start();
         ?>
         <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST">
             <input type="hidden" name="action" value="create_checkout_session">
             <select name="plan">
-                <option value="price_basic">Basic csomag</option>
-                <option value="price_pro">Pro csomag</option>
+                <option value="<?= $stripeBasicID; ?>">Basic csomag</option>
+                <option value="<?= $stripeProID; ?>">Pro csomag</option>
             </select>
             <button type="submit">Előfizetek</button>
         </form>
