@@ -1,0 +1,14 @@
+{
+  "name": "dwp-plugins/dwp-stripe-subscription",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "stripe/stripe-php": "^17.2",
+    "monolog/monolog": "^3.9"
+  },
+  "autoload": {
+    "psr-4": {
+      "DwpStripeSubscription\\": "src/"
+    }
+  }
+}
